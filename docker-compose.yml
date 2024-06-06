@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  app:
+    container_name: "hyperf-sqlcommenter-app"
+    build:
+      context: .docker/development
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    working_dir: /app
+    environment:
+      - PHP_IDE_CONFIG=serverName=hyperf-sqlcommenter-app
+    tty: true
+    volumes:
+      - '.:/app'
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
