@@ -1,4 +1,4 @@
-<p align="center"><a href="https://google.github.io/sqlcommenter/" target="_blank" rel="noopener noreferrer"><img width="180" src="https://google.github.io/sqlcommenter/images/sqlcommenter_logo.png" alt="Sqlcommenter Logo"></a></p>
+<p align="center"><a href="https://google.github.io/sqlcommenter/" target="_blank" rel="noopener noreferrer"><img src="https://i.imgur.com/pkcyYLU.png" alt="Sqlcommenter Logo"></a></p>
 
 <p align="center">
   <a href="https://github.com/reinanhs/sqlcommenter-hyperf/releases"><img src="https://poser.pugx.org/reinanhs/sqlcommenter-hyperf/v/stable" alt="Stable Version"></a>
