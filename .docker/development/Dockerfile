@@ -13,6 +13,6 @@ RUN chmod +x /usr/local/bin/co-phpunit
 
 RUN addgroup -g $GID $GROUP_NAME && \
     adduser --shell /sbin/nologin --disabled-password \
-    --no-create-home --uid $UID --ingroup $GROUP_NAME $USER_NAME
+    --uid $UID --ingroup $GROUP_NAME $USER_NAME
 
 USER $USER_NAME

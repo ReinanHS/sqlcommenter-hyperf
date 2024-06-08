@@ -1,9 +1,23 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Sqlcommenter Hyperf.
+ *
+ * Sqlcommenter Hyperf provides an implementation of Sqlcommenter for the Hyperf framework,
+ * allowing you to automatically add comments to your SQL queries to provide better insights
+ * and traceability in your application's database interactions.
+ *
+ * @link     https://github.com/reinanhs/sqlcommenter-hyperf
+ * @document https://github.com/reinanhs/sqlcommenter-hyperf/wiki
+ * @license  https://github.com/reinanhs/sqlcommenter-hyperf/blob/main/LICENSE
+ */
+
 namespace ReinanHS\SqlCommenterHyperf;
 
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
+
 use const OpenTracing\Formats\TEXT_MAP;
 
 class Opentelemetry
@@ -11,7 +25,7 @@ class Opentelemetry
     /**
      * Retrieves OpenTelemetry values and converts B3 context to W3C TraceContext.
      *
-     * @return array An array containing the W3C TraceContext formatted traceparent.
+     * @return array an array containing the W3C TraceContext formatted traceparent
      */
     public static function getOpentelemetryValues(): array
     {
@@ -19,7 +33,6 @@ class Opentelemetry
 
         $root = TracerContext::getRoot();
         if ($root instanceof Span) {
-
             TracerContext::getTracer()->inject(
                 spanContext: $root->getContext(),
                 format: TEXT_MAP,
@@ -37,8 +50,8 @@ class Opentelemetry
     /**
      * Converts B3 context headers to W3C TraceContext format.
      *
-     * @param array $b3Context An array containing B3 context headers.
-     * @return string The W3C TraceContext formatted traceparent.
+     * @param array $b3Context an array containing B3 context headers
+     * @return string the W3C TraceContext formatted traceparent
      */
     private static function convertB3ToW3C(array $b3Context): string
     {
@@ -48,8 +61,6 @@ class Opentelemetry
 
         // W3C Traceparent format
         $version = '00';
-        $traceparent = "{$version}-{$traceId}-{$spanId}-{$sampled}";
-
-        return $traceparent;
+        return "{$version}-{$traceId}-{$spanId}-{$sampled}";
     }
 }

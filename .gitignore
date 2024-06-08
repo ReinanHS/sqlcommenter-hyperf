@@ -17,5 +17,6 @@ node_modules/*
 *.cache
 .bashrc
 /phpstan.neon
-/phpunit.xml
-/Makefile
+tools/
+reports/
+coverage.xml

@@ -1,9 +1,23 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Sqlcommenter Hyperf.
+ *
+ * Sqlcommenter Hyperf provides an implementation of Sqlcommenter for the Hyperf framework,
+ * allowing you to automatically add comments to your SQL queries to provide better insights
+ * and traceability in your application's database interactions.
+ *
+ * @link     https://github.com/reinanhs/sqlcommenter-hyperf
+ * @document https://github.com/reinanhs/sqlcommenter-hyperf/wiki
+ * @license  https://github.com/reinanhs/sqlcommenter-hyperf/blob/main/LICENSE
+ */
+
 namespace ReinanHS\SqlCommenterHyperf\Aspect;
 
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Connection;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -25,9 +39,11 @@ class SqlCommenterAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $query = $proceedingJoinPoint->arguments['keys']['query'];
-        $dbDriver = $proceedingJoinPoint->getInstance()->getDriverName();
 
-        $proceedingJoinPoint->arguments['keys']['query'] = $this->appendSqlComments($query, $dbDriver);
+        /** @var Connection $dbInstance */
+        $dbInstance = $proceedingJoinPoint->getInstance();
+
+        $proceedingJoinPoint->arguments['keys']['query'] = $this->appendSqlComments($query, $dbInstance->getDriverName());
 
         return $proceedingJoinPoint->process();
     }
@@ -50,7 +66,6 @@ class SqlCommenterAspect extends AbstractAspect
 
         $request = Context::get(ServerRequestInterface::class);
         if ($request) {
-
             if ($this->switchManager->isEnable('route')) {
                 $comments['route'] = $request->getUri()->getPath();
             }

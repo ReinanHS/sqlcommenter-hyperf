@@ -1,5 +1,18 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Sqlcommenter Hyperf.
+ *
+ * Sqlcommenter Hyperf provides an implementation of Sqlcommenter for the Hyperf framework,
+ * allowing you to automatically add comments to your SQL queries to provide better insights
+ * and traceability in your application's database interactions.
+ *
+ * @link     https://github.com/reinanhs/sqlcommenter-hyperf
+ * @document https://github.com/reinanhs/sqlcommenter-hyperf/wiki
+ * @license  https://github.com/reinanhs/sqlcommenter-hyperf/blob/main/LICENSE
+ */
+
 namespace ReinanHS\SqlCommenterHyperf;
 
 class SwitchManager
@@ -16,8 +29,6 @@ class SwitchManager
 
     /**
      * Apply the configuration to SwitchManager.
-     * @param array $config
-     * @return void
      */
     public function apply(array $config): void
     {
@@ -25,13 +36,11 @@ class SwitchManager
     }
 
     /**
-     * Responsible method for checking whether a configuration is active in the include property
-     * @param string $identifier
-     * @return bool
+     * Responsible method for checking whether a configuration is active in the include property.
      */
     public function isEnable(string $identifier): bool
     {
-        if (!isset($this->config[$identifier])) {
+        if (! isset($this->config[$identifier])) {
             return false;
         }
 
