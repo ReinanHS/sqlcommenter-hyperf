@@ -52,7 +52,10 @@
   "scripts": {
     "phpunit": "vendor/bin/phpunit tests --do-not-cache-result --colors=always",
     "phpunit:coverage": [
-      "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml --coverage-html reports/"
+      "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml"
+    ],
+    "phpunit:coverage-html": [
+      "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-html reports/"
     ],
     "psalm": "tools/psalm --no-cache",
     "cs-fixer:check": "tools/php-cs-fixer check",
