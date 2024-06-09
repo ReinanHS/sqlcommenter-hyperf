@@ -45,7 +45,9 @@ class SqlCommenterAspectTest extends TestCase
     public function testProcess(): void
     {
         $mockedConfig = $this->createMock(ConfigInterface::class);
-        $mockedConfig->method('get')->with('app_name')->willReturn('TestApp');
+        $mockedConfig->expects($this->exactly(2))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls(true, 'TestApp');
 
         $mockedSwitchManager = $this->createMock(SwitchManager::class);
         $mockedSwitchManager->expects($this->exactly(7))

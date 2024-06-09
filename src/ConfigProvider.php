@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace ReinanHS\SqlCommenterHyperf;
 
+use ReinanHS\SqlCommenterHyperf\Aspect\SqlCommenterAspect;
 use ReinanHS\SqlCommenterHyperf\Factory\SwitchManagerFactory;
 
 class ConfigProvider
@@ -25,9 +26,9 @@ class ConfigProvider
             'dependencies' => [
                 SwitchManager::class => SwitchManagerFactory::class,
             ],
-            'listeners' => [],
-            'annotations' => [],
-            'aspects' => [],
+            'aspects' => [
+                SqlCommenterAspect::class,
+            ],
             'publish' => [
                 [
                     'id' => 'config',

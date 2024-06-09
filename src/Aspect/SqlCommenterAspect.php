@@ -38,6 +38,10 @@ class SqlCommenterAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        if (! $this->config->get('sqlcommenter.enable', true)) {
+            return $proceedingJoinPoint->process();
+        }
+
         $query = $proceedingJoinPoint->arguments['keys']['query'];
 
         /** @var Connection $dbInstance */

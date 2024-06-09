@@ -15,12 +15,13 @@ declare(strict_types=1);
 use function Hyperf\Support\env;
 
 return [
+    'enable' => true,
     'include' => [
-        'framework' => env('SQLCOMMENTER_ENABLE_FRAMEWORK', false),
-        'controller' => env('SQLCOMMENTER_ENABLE_CONTROLLER', false),
-        'action' => env('SQLCOMMENTER_ENABLE_ACTION', false),
-        'route' => env('SQLCOMMENTER_ENABLE_ROUTE', false),
-        'application' => env('SQLCOMMENTER_ENABLE_APPLICATION', false),
-        'db_driver' => env('SQLCOMMENTER_ENABLE_DB_DRIVER', false),
+        'framework' => env('SQLCOMMENTER_ENABLE_FRAMEWORK', true),
+        'controller' => env('SQLCOMMENTER_ENABLE_CONTROLLER', true),
+        'action' => env('SQLCOMMENTER_ENABLE_ACTION', true),
+        'route' => env('SQLCOMMENTER_ENABLE_ROUTE', true),
+        'application' => env('SQLCOMMENTER_ENABLE_APPLICATION', true),
+        'db_driver' => env('SQLCOMMENTER_ENABLE_DB_DRIVER', true),
     ],
 ];

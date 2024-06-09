@@ -18,13 +18,13 @@ namespace ReinanHS\SqlCommenterHyperf;
 class SwitchManager
 {
     private array $config = [
-        'framework' => false,
-        'controller' => false,
-        'action' => false,
-        'route' => false,
-        'application' => false,
-        'db_driver' => false,
-        'traceparent' => false,
+        'framework' => true,
+        'controller' => true,
+        'action' => true,
+        'route' => true,
+        'application' => true,
+        'db_driver' => true,
+        'traceparent' => true,
     ];
 
     /**

@@ -27,39 +27,21 @@ class SwitchManagerTest extends TestCase
     public function testDefaultConfig()
     {
         $switchManager = new SwitchManager();
-        $this->assertFalse($switchManager->isEnable('framework'));
-        $this->assertFalse($switchManager->isEnable('controller'));
-        $this->assertFalse($switchManager->isEnable('action'));
-        $this->assertFalse($switchManager->isEnable('route'));
-        $this->assertFalse($switchManager->isEnable('application'));
-        $this->assertFalse($switchManager->isEnable('db_driver'));
-        $this->assertFalse($switchManager->isEnable('traceparent'));
+        $this->assertTrue($switchManager->isEnable('framework'));
+        $this->assertTrue($switchManager->isEnable('controller'));
+        $this->assertTrue($switchManager->isEnable('action'));
+        $this->assertTrue($switchManager->isEnable('route'));
+        $this->assertTrue($switchManager->isEnable('application'));
+        $this->assertTrue($switchManager->isEnable('db_driver'));
+        $this->assertTrue($switchManager->isEnable('traceparent'));
     }
 
     public function testApplyConfig()
     {
         $switchManager = new SwitchManager();
         $config = [
-            'framework' => true,
-            'controller' => true,
-        ];
-        $switchManager->apply($config);
-
-        $this->assertTrue($switchManager->isEnable('framework'));
-        $this->assertTrue($switchManager->isEnable('controller'));
-        $this->assertFalse($switchManager->isEnable('action'));
-        $this->assertFalse($switchManager->isEnable('route'));
-        $this->assertFalse($switchManager->isEnable('application'));
-        $this->assertFalse($switchManager->isEnable('db_driver'));
-        $this->assertFalse($switchManager->isEnable('traceparent'));
-    }
-
-    public function testApplyPartialConfig()
-    {
-        $switchManager = new SwitchManager();
-        $config = [
-            'action' => true,
-            'route' => true,
+            'framework' => false,
+            'controller' => false,
         ];
         $switchManager->apply($config);
 
@@ -67,9 +49,27 @@ class SwitchManagerTest extends TestCase
         $this->assertFalse($switchManager->isEnable('controller'));
         $this->assertTrue($switchManager->isEnable('action'));
         $this->assertTrue($switchManager->isEnable('route'));
-        $this->assertFalse($switchManager->isEnable('application'));
-        $this->assertFalse($switchManager->isEnable('db_driver'));
-        $this->assertFalse($switchManager->isEnable('traceparent'));
+        $this->assertTrue($switchManager->isEnable('application'));
+        $this->assertTrue($switchManager->isEnable('db_driver'));
+        $this->assertTrue($switchManager->isEnable('traceparent'));
+    }
+
+    public function testApplyPartialConfig()
+    {
+        $switchManager = new SwitchManager();
+        $config = [
+            'action' => false,
+            'route' => true,
+        ];
+        $switchManager->apply($config);
+
+        $this->assertTrue($switchManager->isEnable('framework'));
+        $this->assertTrue($switchManager->isEnable('controller'));
+        $this->assertFalse($switchManager->isEnable('action'));
+        $this->assertTrue($switchManager->isEnable('route'));
+        $this->assertTrue($switchManager->isEnable('application'));
+        $this->assertTrue($switchManager->isEnable('db_driver'));
+        $this->assertTrue($switchManager->isEnable('traceparent'));
     }
 
     public function testIsEnableWithInvalidIdentifier()
