@@ -29,7 +29,7 @@ use ReinanHS\SqlCommenterHyperf\Utils;
 class SqlCommenterAspect extends AbstractAspect
 {
     public array $classes = [
-        'Hyperf\Database\Connection::run',
+        'Hyperf\Database\Connection::runQueryCallback',
     ];
 
     public function __construct(private readonly ConfigInterface $config, private readonly SwitchManager $switchManager)
