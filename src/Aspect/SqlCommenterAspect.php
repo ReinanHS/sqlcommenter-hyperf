@@ -22,6 +22,7 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Router\Dispatched;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
 use ReinanHS\SqlCommenterHyperf\SwitchManager;
 use ReinanHS\SqlCommenterHyperf\Utils;
@@ -32,8 +33,11 @@ class SqlCommenterAspect extends AbstractAspect
         'Hyperf\Database\Connection::runQueryCallback',
     ];
 
-    public function __construct(private readonly ConfigInterface $config, private readonly SwitchManager $switchManager)
-    {
+    public function __construct(
+        private readonly ConfigInterface $config,
+        private readonly SwitchManager $switchManager,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -42,12 +46,20 @@ class SqlCommenterAspect extends AbstractAspect
             return $proceedingJoinPoint->process();
         }
 
+        $start = microtime(true);
         $query = $proceedingJoinPoint->arguments['keys']['query'];
 
         /** @var Connection $dbInstance */
         $dbInstance = $proceedingJoinPoint->getInstance();
 
         $proceedingJoinPoint->arguments['keys']['query'] = $this->appendSqlComments($query, $dbInstance->getDriverName());
+
+        $end = microtime(true);
+        $time_elapsed_ms = ($end - $start) * 1000;
+
+        $this->logger->debug(sprintf("Execution time Sqlcommenter code: %.2f ms\n", $time_elapsed_ms), [
+            'execution_time' => $time_elapsed_ms,
+        ]);
 
         return $proceedingJoinPoint->process();
     }

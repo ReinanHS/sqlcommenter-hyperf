@@ -27,6 +27,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 use ReinanHS\SqlCommenterHyperf\Aspect\SqlCommenterAspect;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
 use ReinanHS\SqlCommenterHyperf\SwitchManager;
@@ -53,6 +54,8 @@ class SqlCommenterAspectTest extends TestCase
         $mockedSwitchManager->expects($this->exactly(7))
             ->method('isEnable')
             ->willReturn(true);
+
+        $mockedLogger = $this->createMock(LoggerInterface::class);
 
         $mockedProceedingJoinPoint = $this->getMockBuilder(ProceedingJoinPoint::class)
             ->disableOriginalConstructor()
@@ -107,7 +110,7 @@ class SqlCommenterAspectTest extends TestCase
             ->method('process')
             ->willReturn(true);
 
-        $aspect = new SqlCommenterAspect($mockedConfig, $mockedSwitchManager);
+        $aspect = new SqlCommenterAspect($mockedConfig, $mockedSwitchManager, $mockedLogger);
         $result = $aspect->process($mockedProceedingJoinPoint);
 
         $query = $mockedProceedingJoinPoint->arguments['keys']['query'];
