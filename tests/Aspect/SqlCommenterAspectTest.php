@@ -50,7 +50,7 @@ class SqlCommenterAspectTest extends TestCase
             ->willReturnOnConsecutiveCalls(true, 'TestApp');
 
         $mockedSwitchManager = $this->createMock(SwitchManager::class);
-        $mockedSwitchManager->expects($this->exactly(7))
+        $mockedSwitchManager->expects($this->exactly(8))
             ->method('isEnable')
             ->willReturn(true);
 
@@ -118,7 +118,7 @@ class SqlCommenterAspectTest extends TestCase
         $this->assertStringContainsString("application='TestApp'", $query);
         $this->assertStringContainsString("db_driver='mysql'", $query);
         $this->assertStringContainsString("route='%%2Fv1%%2Fadmin%%2Findex'", $query);
-        $this->assertStringContainsString("controller='IndexController.php'", $query);
+        $this->assertStringContainsString("controller='IndexController'", $query);
         $this->assertStringContainsString("action='index'", $query);
         $this->assertStringContainsString("traceparent='00-5bd66ef5095369c7b0d1f8f4bd33716a-c532cb4098ac3dd2-01'", $query);
         $this->assertTrue($result);

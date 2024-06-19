@@ -74,16 +74,17 @@ class SqlCommenterAspect extends AbstractAspect
                 $comments['route'] = $request->getUri()->getPath();
             }
 
-            $dispatched = $request->getAttribute(Dispatched::class);
-            $callback = $dispatched->handler->callback;
+            if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
+                $dispatched = $request->getAttribute(Dispatched::class);
+                $parts = Utils::extractCallback($dispatched->handler->callback);
 
-            if ($this->switchManager->isEnable('controller') && is_array($callback)) {
-                $mapController = explode('/', $callback[0]);
-                $comments['controller'] = end($mapController);
-            }
+                if ($this->switchManager->isEnable('controller')) {
+                    $comments['controller'] = $parts[0];
+                }
 
-            if ($this->switchManager->isEnable('action') && is_array($callback)) {
-                $comments['action'] = $callback[1] ?? '';
+                if ($this->switchManager->isEnable('action')) {
+                    $comments['action'] = $parts[1];
+                }
             }
         }
 
