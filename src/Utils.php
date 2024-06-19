@@ -47,16 +47,22 @@ class Utils
         switch (gettype($callback)) {
             case 'string':
                 $parts = explode('@', $callback);
-                $method = $parts[1] ?? '';
+                $method = $parts[1] ?? '__invoke';
 
                 $controllerNameParts = explode('\\', $parts[0]);
                 $controllerName = end($controllerNameParts);
 
                 return [$controllerName, $method];
             case 'array':
-                return [basename($callback[0], '.php'), $callback[1]];
+                $method = $callback[1] ?? '__invoke';
+
+                $controllerNameParts = explode('\\', $callback[0]);
+                $controllerName = end($controllerNameParts);
+                $controllerName = str_replace('.php', '', $controllerName);
+
+                return [$controllerName, $method];
             default:
-                return ['', ''];
+                return ['', 'callable'];
         }
     }
 

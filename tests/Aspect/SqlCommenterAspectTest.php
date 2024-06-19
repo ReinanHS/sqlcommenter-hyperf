@@ -67,7 +67,7 @@ class SqlCommenterAspectTest extends TestCase
             ->with(Dispatched::class)
             ->willReturn(new Dispatched([
                 Dispatcher::FOUND,
-                new Handler(['app/Controller/IndexController.php', 'index'], ''),
+                new Handler('App\Controller\IndexController@index', ''),
                 [],
             ]));
 

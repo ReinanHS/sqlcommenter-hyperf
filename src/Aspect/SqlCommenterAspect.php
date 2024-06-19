@@ -87,15 +87,19 @@ class SqlCommenterAspect extends AbstractAspect
             }
 
             if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
+                /** @var null|Dispatched $dispatched */
                 $dispatched = $request->getAttribute(Dispatched::class);
-                $parts = Utils::extractCallback($dispatched->handler->callback);
 
-                if ($this->switchManager->isEnable('controller')) {
-                    $comments['controller'] = $parts[0];
-                }
+                if ($dispatched && $dispatched->isFound()) {
+                    $parts = Utils::extractCallback($dispatched->handler?->callback);
 
-                if ($this->switchManager->isEnable('action')) {
-                    $comments['action'] = $parts[1];
+                    if ($this->switchManager->isEnable('controller')) {
+                        $comments['controller'] = $parts[0];
+                    }
+
+                    if ($this->switchManager->isEnable('action')) {
+                        $comments['action'] = $parts[1];
+                    }
                 }
             }
         }

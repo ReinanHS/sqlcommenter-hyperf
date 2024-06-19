@@ -1,7 +1,7 @@
 up:
 	docker compose up
 down:
-	docker compose down -v
+	docker compose down
 php:
 	docker exec -it hyperf-sqlcommenter-app bash
 check:
