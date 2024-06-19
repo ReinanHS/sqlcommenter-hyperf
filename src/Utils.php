@@ -37,6 +37,30 @@ class Utils
     }
 
     /**
+     * Extracts the controller name and method from a callback.
+     *
+     * @param mixed $callback the callback can be a string 'Namespace\Class@method' or an array [Class, 'method']
+     * @return array returns an array with the controller name and method
+     */
+    public static function extractCallback(mixed $callback): array
+    {
+        switch (gettype($callback)) {
+            case 'string':
+                $parts = explode('@', $callback);
+                $method = $parts[1] ?? '';
+
+                $controllerNameParts = explode('\\', $parts[0]);
+                $controllerName = end($controllerNameParts);
+
+                return [$controllerName, $method];
+            case 'array':
+                return [basename($callback[0], '.php'), $callback[1]];
+            default:
+                return ['', ''];
+        }
+    }
+
+    /**
      * Custom URL encoding to escape '%' characters for SQL compatibility.
      */
     private static function customUrlEncode(string $input): string
