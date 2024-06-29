@@ -57,7 +57,7 @@ class SqlCommenterAspect extends AbstractAspect
         $end = microtime(true);
         $time_elapsed_ms = ($end - $start) * 1000;
 
-        $this->logger->debug(sprintf("Execution time Sqlcommenter code: %.2f ms\n", $time_elapsed_ms), [
+        $this->logger->debug(sprintf("Execution time Sqlcommenter code: %.2f ms", $time_elapsed_ms), [
             'execution_time' => $time_elapsed_ms,
         ]);
 
