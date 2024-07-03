@@ -39,9 +39,11 @@ class Opentelemetry
                 carrier: $appendContext
             );
 
-            $traceparent = self::convertB3ToW3C($appendContext);
+            if ($appendContext) {
+                $traceparent = self::convertB3ToW3C($appendContext);
 
-            return ['traceparent' => $traceparent];
+                return ['traceparent' => $traceparent];
+            }
         }
 
         return $appendContext;
