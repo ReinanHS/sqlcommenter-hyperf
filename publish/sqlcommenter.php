@@ -15,7 +15,7 @@ declare(strict_types=1);
 use function Hyperf\Support\env;
 
 return [
-    'enable' => true,
+    'enable' => env('SQLCOMMENTER_ENABLE', true),
     'include' => [
         'framework' => env('SQLCOMMENTER_ENABLE_FRAMEWORK', true),
         'controller' => env('SQLCOMMENTER_ENABLE_CONTROLLER', true),
