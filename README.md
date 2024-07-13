@@ -1,4 +1,4 @@
-English | [Português](./README-PT.md)
+English | [Português](./README-PT.md) | [中文](./README-CN.md)
 
 <p align="center"><a href="https://google.github.io/sqlcommenter/" target="_blank" rel="noopener noreferrer"><img src="https://i.imgur.com/pkcyYLU.png" alt="Sqlcommenter Logo"></a></p>
 
@@ -178,7 +178,7 @@ approximately **0.103 milliseconds (ms)**.
 This value indicates that inserting SQL comments into queries is an extremely
 fast operation, adding negligible overhead to the total query execution time.
 
-- [Complete documentation regarding the average execution time test of the code block](https://github.com/ReinanHS/sqlcommenter-hyperf/wiki/Performance#average-execution-time-test-of-the-code-block)
+- [Complete documentation regarding the average execution time test of the code block](https://github.com/ReinanHS/sqlcommenter-hyperf/wiki/Performance#performance-analysis-of-the-code-block-in-the-library)
 
 ### Request latency performance test
 

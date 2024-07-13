@@ -1,4 +1,4 @@
-Português | [English](./README.md)
+Português | [English](./README.md) | [中文](./README-CN.md)
 
 <p align="center"><a href="https://google.github.io/sqlcommenter/" target="_blank" rel="noopener noreferrer"><img src="https://i.imgur.com/pkcyYLU.png" alt="Sqlcommenter Logo"></a></p>
 
@@ -158,7 +158,7 @@ Neste teste, mediremos o tempo médio de execução do bloco de código SqlComme
 
 Esse valor indica que a inserção de comentários SQL nas consultas é uma operação extremamente rápida, adicionando um overhead insignificante ao tempo total de execução da consulta.
 
-- [Documentação completa sobre o teste de tempo médio de execução do bloco de código](https://github.com/ReinanHS/sqlcommenter-hyperf/wiki/Performance#average-execution-time-test-of-the-code-block)
+- [Documentação completa sobre o teste de tempo médio de execução do bloco de código](https://github.com/ReinanHS/sqlcommenter-hyperf/wiki/Performance#performance-analysis-of-the-code-block-in-the-library)
 
 ### Teste de desempenho de latência de requisição
 
