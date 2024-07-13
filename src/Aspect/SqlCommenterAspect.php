@@ -15,13 +15,12 @@ declare(strict_types=1);
 
 namespace ReinanHS\SqlCommenterHyperf\Aspect;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Connection;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Router\Dispatched;
-use Psr\Http\Message\ServerRequestInterface;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
 use ReinanHS\SqlCommenterHyperf\SwitchManager;
 use ReinanHS\SqlCommenterHyperf\Utils;
@@ -38,10 +37,11 @@ class SqlCommenterAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (! $this->config->get('sqlcommenter.enable', true)) {
+        if (! $this->config->get('sqlcommenter.enable', true) || ! isset($proceedingJoinPoint->arguments['keys']['query'])) {
             return $proceedingJoinPoint->process();
         }
 
+        /** @var string $query */
         $query = $proceedingJoinPoint->arguments['keys']['query'];
 
         /** @var Connection $dbInstance */
@@ -61,33 +61,31 @@ class SqlCommenterAspect extends AbstractAspect
         }
 
         if ($this->switchManager->isEnable('application')) {
-            $comments['application'] = $this->config->get('app_name');
+            $comments['application'] = (string) $this->config->get('app_name');
         }
 
         if ($this->switchManager->isEnable('db_driver')) {
             $comments['db_driver'] = $dbDriver;
         }
 
-        $request = Context::get(ServerRequestInterface::class);
-        if ($request) {
-            if ($this->switchManager->isEnable('route')) {
-                $comments['route'] = $request->getUri()->getPath();
-            }
+        $request = RequestContext::get();
+        if ($this->switchManager->isEnable('route')) {
+            $comments['route'] = $request->getUri()->getPath();
+        }
 
-            if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
-                /** @var null|Dispatched $dispatched */
-                $dispatched = $request->getAttribute(Dispatched::class);
+        if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
+            /** @var null|Dispatched $dispatched */
+            $dispatched = $request->getAttribute(Dispatched::class);
 
-                if ($dispatched && $dispatched->isFound()) {
-                    $parts = Utils::extractCallback($dispatched->handler?->callback);
+            if ($dispatched && $dispatched->isFound()) {
+                $parts = Utils::extractCallback($dispatched->handler?->callback);
 
-                    if ($this->switchManager->isEnable('controller')) {
-                        $comments['controller'] = $parts[0];
-                    }
+                if ($this->switchManager->isEnable('controller')) {
+                    $comments['controller'] = (string) $parts[0];
+                }
 
-                    if ($this->switchManager->isEnable('action')) {
-                        $comments['action'] = $parts[1];
-                    }
+                if ($this->switchManager->isEnable('action')) {
+                    $comments['action'] = (string) $parts[1];
                 }
             }
         }

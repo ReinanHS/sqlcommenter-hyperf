@@ -44,6 +44,6 @@ class SwitchManager
             return false;
         }
 
-        return $this->config[$identifier];
+        return (bool) $this->config[$identifier];
     }
 }

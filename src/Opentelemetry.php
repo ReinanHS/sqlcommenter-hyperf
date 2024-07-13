@@ -29,24 +29,24 @@ class Opentelemetry
      */
     public static function getOpentelemetryValues(): array
     {
-        $appendContext = [];
-
         $root = TracerContext::getRoot();
         if ($root instanceof Span) {
+            $appendContext = [];
+
             TracerContext::getTracer()->inject(
                 spanContext: $root->getContext(),
                 format: TEXT_MAP,
                 carrier: $appendContext
             );
 
-            if ($appendContext) {
+            if ($appendContext && is_array($appendContext)) {
                 $traceparent = self::convertB3ToW3C($appendContext);
 
                 return ['traceparent' => $traceparent];
             }
         }
 
-        return $appendContext;
+        return [];
     }
 
     /**
@@ -57,8 +57,8 @@ class Opentelemetry
      */
     private static function convertB3ToW3C(array $b3Context): string
     {
-        $traceId = str_pad($b3Context['x-b3-traceid'], 32, '0', STR_PAD_LEFT);
-        $spanId = str_pad($b3Context['x-b3-spanid'], 16, '0', STR_PAD_LEFT);
+        $traceId = str_pad((string) $b3Context['x-b3-traceid'], 32, '0', STR_PAD_LEFT);
+        $spanId = str_pad((string) $b3Context['x-b3-spanid'], 16, '0', STR_PAD_LEFT);
         $sampled = $b3Context['x-b3-sampled'] === '1' ? '01' : '00';
 
         // W3C Traceparent format

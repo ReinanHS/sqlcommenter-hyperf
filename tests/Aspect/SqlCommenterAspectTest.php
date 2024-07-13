@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace ReinanHS\Test\Aspect;
 
 use FastRoute\Dispatcher;
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Connection;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -25,7 +25,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\Handler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use ReinanHS\SqlCommenterHyperf\Aspect\SqlCommenterAspect;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
@@ -77,9 +76,9 @@ class SqlCommenterAspectTest extends TestCase
             ->method('getUri')
             ->willReturn($mockedUri);
 
-        $mockedContext = Mockery::mock('alias:' . Context::class);
+        $mockedContext = Mockery::mock('alias:' . RequestContext::class);
         $mockedContext->shouldReceive('get')
-            ->with(ServerRequestInterface::class)
+            ->with()
             ->andReturn($mockedRequest);
 
         $mockedOpentelemetry = Mockery::mock('alias:' . Opentelemetry::class);

@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace ReinanHS\SqlCommenterHyperf\Factory;
 
+use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use ReinanHS\SqlCommenterHyperf\SwitchManager;
@@ -23,10 +24,15 @@ class SwitchManagerFactory
 {
     public function __invoke(ContainerInterface $container): SwitchManager
     {
+        /** @var Config $config */
         $config = $container->get(ConfigInterface::class);
-        $manager = new SwitchManager();
-        $manager->apply($config->get('sqlcommenter.include', []));
 
+        $manager = new SwitchManager();
+
+        /** @var array $sqlcommenterConfig */
+        $sqlcommenterConfig = $config->get('sqlcommenter.include', []);
+
+        $manager->apply($sqlcommenterConfig);
         return $manager;
     }
 }

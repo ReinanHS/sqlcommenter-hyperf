@@ -29,7 +29,9 @@ class Utils
         return '/*' . implode(
             ',',
             array_map(
-                static fn (string $value, string $key) => Utils::customUrlEncode($key) . "='" . Utils::customUrlEncode($value) . "'",
+                function (string $value, string $key): string {
+                    return Utils::customUrlEncode($key) . "='" . Utils::customUrlEncode($value) . "'";
+                },
                 $comments,
                 array_keys($comments)
             ),
@@ -54,9 +56,10 @@ class Utils
 
                 return [$controllerName, $method];
             case 'array':
+                /** @var string $method */
                 $method = $callback[1] ?? '__invoke';
 
-                $controllerNameParts = explode('\\', $callback[0]);
+                $controllerNameParts = explode('\\', (string) $callback[0]);
                 $controllerName = end($controllerNameParts);
                 $controllerName = str_replace('.php', '', $controllerName);
 
