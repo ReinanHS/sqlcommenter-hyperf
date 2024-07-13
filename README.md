@@ -52,8 +52,8 @@ db_driver='mysql',
 traceparent='00-1cd60708968a61e942b5dacc2d4a5473-7534abe7ed36ce35-01'*/
 ```
 
-By examining the above SQL statement and its comment in `/*...*/`, we can correlate and identify the fields in the slow
-SQL query to our source code in our web application:
+By examining the above SQL statement and its comment in `/*...*/`, we can correlate and identify the fields in the
+SQL query to our source code in Hyperf:
 
 > Table 1: Information about the description of each type of comment
 
