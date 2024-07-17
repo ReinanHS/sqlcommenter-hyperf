@@ -15,12 +15,13 @@ declare(strict_types=1);
 
 namespace ReinanHS\SqlCommenterHyperf\Aspect;
 
-use Hyperf\Context\RequestContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Connection;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Router\Dispatched;
+use Psr\Http\Message\ServerRequestInterface;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
 use ReinanHS\SqlCommenterHyperf\SwitchManager;
 use ReinanHS\SqlCommenterHyperf\Utils;
@@ -68,24 +69,30 @@ class SqlCommenterAspect extends AbstractAspect
             $comments['db_driver'] = $dbDriver;
         }
 
-        $request = RequestContext::get();
-        if ($this->switchManager->isEnable('route')) {
-            $comments['route'] = $request->getUri()->getPath();
-        }
+        /**
+         * @psalm-suppress InvalidArgument
+         * @var null|ServerRequestInterface $request
+         */
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request instanceof ServerRequestInterface) {
+            if ($this->switchManager->isEnable('route')) {
+                $comments['route'] = $request->getUri()->getPath();
+            }
 
-        if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
-            /** @var null|Dispatched $dispatched */
-            $dispatched = $request->getAttribute(Dispatched::class);
+            if ($this->switchManager->isEnable('controller') || $this->switchManager->isEnable('action')) {
+                /** @var null|Dispatched $dispatched */
+                $dispatched = $request->getAttribute(Dispatched::class);
 
-            if ($dispatched && $dispatched->isFound()) {
-                $parts = Utils::extractCallback($dispatched->handler?->callback);
+                if ($dispatched && $dispatched->isFound()) {
+                    $parts = Utils::extractCallback($dispatched->handler?->callback);
 
-                if ($this->switchManager->isEnable('controller')) {
-                    $comments['controller'] = (string) $parts[0];
-                }
+                    if ($this->switchManager->isEnable('controller')) {
+                        $comments['controller'] = (string) $parts[0];
+                    }
 
-                if ($this->switchManager->isEnable('action')) {
-                    $comments['action'] = (string) $parts[1];
+                    if ($this->switchManager->isEnable('action')) {
+                        $comments['action'] = (string) $parts[1];
+                    }
                 }
             }
         }

@@ -6,7 +6,7 @@ php:
 	docker exec -it hyperf-sqlcommenter-app bash
 check:
 	tools/php-cs-fixer fix
-	tools/psalm --output-format=console --show-info=true
+	tools/psalm --output-format=console --show-info=true --no-cache
 install:
 	phive install
 	composer install

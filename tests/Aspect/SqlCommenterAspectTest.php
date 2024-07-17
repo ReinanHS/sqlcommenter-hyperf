@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace ReinanHS\Test\Aspect;
 
 use FastRoute\Dispatcher;
-use Hyperf\Context\RequestContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Connection;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -25,6 +25,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\Handler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use ReinanHS\SqlCommenterHyperf\Aspect\SqlCommenterAspect;
 use ReinanHS\SqlCommenterHyperf\Opentelemetry;
@@ -76,9 +77,9 @@ class SqlCommenterAspectTest extends TestCase
             ->method('getUri')
             ->willReturn($mockedUri);
 
-        $mockedContext = Mockery::mock('alias:' . RequestContext::class);
+        $mockedContext = Mockery::mock('alias:' . Context::class);
         $mockedContext->shouldReceive('get')
-            ->with()
+            ->with(ServerRequestInterface::class)
             ->andReturn($mockedRequest);
 
         $mockedOpentelemetry = Mockery::mock('alias:' . Opentelemetry::class);
@@ -119,6 +120,69 @@ class SqlCommenterAspectTest extends TestCase
         $this->assertStringContainsString("route='%%2Fv1%%2Fadmin%%2Findex'", $query);
         $this->assertStringContainsString("controller='IndexController'", $query);
         $this->assertStringContainsString("action='index'", $query);
+        $this->assertStringContainsString("traceparent='00-5bd66ef5095369c7b0d1f8f4bd33716a-c532cb4098ac3dd2-01'", $query);
+        $this->assertTrue($result);
+    }
+
+    public function testProcessNoRequest(): void
+    {
+        $mockedConfig = $this->createMock(ConfigInterface::class);
+        $mockedConfig->expects($this->exactly(2))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls(true, 'TestApp');
+
+        $mockedSwitchManager = $this->createMock(SwitchManager::class);
+        $mockedSwitchManager->expects($this->exactly(4))
+            ->method('isEnable')
+            ->willReturn(true);
+
+        $mockedProceedingJoinPoint = $this->getMockBuilder(ProceedingJoinPoint::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockedContext = Mockery::mock('alias:' . Context::class);
+        $mockedContext->shouldReceive('get')
+            ->with(ServerRequestInterface::class)
+            ->andReturn(null);
+
+        $mockedOpentelemetry = Mockery::mock('alias:' . Opentelemetry::class);
+        $mockedOpentelemetry->shouldReceive('getOpentelemetryValues')
+            ->andReturn([
+                'traceparent' => '00-5bd66ef5095369c7b0d1f8f4bd33716a-c532cb4098ac3dd2-01',
+            ]);
+
+        $mockedProceedingJoinPoint->arguments = [
+            'keys' => [
+                'query' => 'SELECT CURRENT_TIMESTAMP()',
+            ],
+        ];
+
+        $mockedConnection = $this->createMock(Connection::class);
+        $mockedConnection->expects($this->once())
+            ->method('getDriverName')
+            ->willReturn('mysql');
+
+        $mockedProceedingJoinPoint->expects($this->once())
+            ->method('getInstance')
+            ->willReturn($mockedConnection);
+
+        $mockedProceedingJoinPoint->expects($this->once())
+            ->method('process')
+            ->willReturn(true);
+
+        $aspect = new SqlCommenterAspect($mockedConfig, $mockedSwitchManager);
+        $result = $aspect->process($mockedProceedingJoinPoint);
+
+        $query = $mockedProceedingJoinPoint->arguments['keys']['query'];
+
+        $this->assertStringContainsString('SELECT CURRENT_TIMESTAMP()', $query);
+        $this->assertStringContainsString("application='TestApp'", $query);
+        $this->assertStringContainsString("framework='hyperf'", $query);
+        $this->assertStringContainsString("application='TestApp'", $query);
+        $this->assertStringContainsString("db_driver='mysql'", $query);
+        $this->assertStringNotContainsString("route='%%2Fv1%%2Fadmin%%2Findex'", $query);
+        $this->assertStringNotContainsString("controller='IndexController'", $query);
+        $this->assertStringNotContainsString("action='index'", $query);
         $this->assertStringContainsString("traceparent='00-5bd66ef5095369c7b0d1f8f4bd33716a-c532cb4098ac3dd2-01'", $query);
         $this->assertTrue($result);
     }
