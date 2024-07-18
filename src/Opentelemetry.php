@@ -39,8 +39,16 @@ class Opentelemetry
                 carrier: $appendContext
             );
 
-            if ($appendContext && is_array($appendContext)) {
+            if ($appendContext && isset($appendContext['x-b3-traceid'])) {
+                /** @psalm-suppress PossiblyInvalidArgument */
                 $traceparent = self::convertB3ToW3C($appendContext);
+
+                return ['traceparent' => $traceparent];
+            }
+
+            if ($appendContext && isset($appendContext['uber-trace-id'])) {
+                /** @psalm-suppress PossiblyInvalidArgument */
+                $traceparent = self::convertUberTraceIdToTraceparent($appendContext);
 
                 return ['traceparent' => $traceparent];
             }
@@ -64,5 +72,27 @@ class Opentelemetry
         // W3C Traceparent format
         $version = '00';
         return "{$version}-{$traceId}-{$spanId}-{$sampled}";
+    }
+
+    /**
+     * Converts an Uber Trace ID to a W3C Traceparent format.
+     *
+     * @param array $uberContext An associative array containing the Uber Trace ID with the key 'uber-trace-id'.
+     *                           Example: ['uber-trace-id' => '7316935077496437249:658af9afaac53a01:0:0']
+     *
+     * @return string The W3C Traceparent formatted string.
+     *                Example: '00-00000000000007316935077496437249-658af9afaac53a01-00'
+     */
+    private static function convertUberTraceIdToTraceparent(array $uberContext): string
+    {
+        [$traceId, $spanId, $parentSpanId, $flags] = explode(':', (string) $uberContext['uber-trace-id']);
+
+        $traceId = str_pad($traceId, 32, '0', STR_PAD_LEFT);
+        $spanId = str_pad($spanId, 16, '0', STR_PAD_LEFT);
+        $sampled = $flags === '1' ? '01' : '00';
+
+        // W3C Traceparent format
+        $version = '00';
+        return sprintf('%s-%s-%s-%s', $version, $traceId, $spanId, $sampled);
     }
 }
